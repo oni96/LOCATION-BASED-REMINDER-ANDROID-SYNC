@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#555">
+
+
+    <fragment
+        android:id="@+id/mapfragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/search_bar"
+        android:focusable="false"
+        android:hint="Search"
+        android:inputType="textNoSuggestions"
+        android:onClick="searchPlace"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="#ccc"
+        android:textColorHint="#aaa" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/round_button"
+        android:onClick="getLocationButton"
+        android:text="LOCATE" />
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="80dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/black_dot"
+        android:onClick="addButton"
+        android:text="ADD" />
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="150dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/black_dot"
+        android:onClick="showAllJobs"
+        android:text="SHOW ALL" />
+
+</FrameLayout>
