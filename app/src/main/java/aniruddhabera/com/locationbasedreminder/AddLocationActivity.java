@@ -143,7 +143,7 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
         editor.putString("note",jobText.getText().toString());
         editor.putString("address",address.getText().toString());
         editor.commit();
-
+        //Todo add to database
         Intent intent = new Intent(AddLocationActivity.this,MainActivity.class);
         startActivity(intent);
 
