@@ -144,7 +144,9 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
         helper.addToTable(jobText.getText().toString(),sentLatlng.latitude,sentLatlng.longitude,circle.getRadius());
 
         Intent intent = new Intent(AddLocationActivity.this,MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+
 
 
     }

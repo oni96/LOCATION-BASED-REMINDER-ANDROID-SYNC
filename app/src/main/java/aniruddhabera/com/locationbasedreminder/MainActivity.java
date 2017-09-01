@@ -239,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onDestroy() {
-        toast.cancel();
         locationManager.removeUpdates(this);
         super.onDestroy();
     }
@@ -392,8 +391,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             editor.commit();
 
             Intent intent = new Intent(MainActivity.this, AddLocationActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+
 
 
         }
