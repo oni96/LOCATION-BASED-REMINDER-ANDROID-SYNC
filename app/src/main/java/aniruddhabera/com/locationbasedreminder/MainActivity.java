@@ -96,13 +96,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Runnable checkDistance = new Runnable() {
             @Override
             public void run() {
-                if (result[0] <= circle.getRadius())
+                if (result[0] <= circle.getRadius() && (circle != null))
                     Toast.makeText(MainActivity.this, "You're nearby a task.", Toast.LENGTH_SHORT).show();
 
                 handler.postDelayed(this, 10000);
             }
         };
-        handler.postDelayed(checkDistance, 10000);
+
+            handler.postDelayed(checkDistance, 10000);
+
     }
 
 

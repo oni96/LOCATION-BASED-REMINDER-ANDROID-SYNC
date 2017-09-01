@@ -135,17 +135,18 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
     }
 
     public void addButton(View v){
-//        SharedPreferences preferences = getSharedPreferences("STORENOTE",MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-//
-//        editor.putString("lat",String.valueOf(sentLatlng.latitude));
-//        editor.putString("lon",String.valueOf(sentLatlng.longitude));
-//        editor.putString("note",jobText.getText().toString());
-//        editor.putString("address",address.getText().toString());
-//        editor.commit();
+        SharedPreferences preferences = getSharedPreferences("STORENOTE",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString("lat",String.valueOf(sentLatlng.latitude));
+        editor.putString("lon",String.valueOf(sentLatlng.longitude));
+        editor.putString("note",jobText.getText().toString());
+        editor.putString("address",address.getText().toString());
+        editor.commit();
         //Todo add to database
-        DatabaseHelper helper = new DatabaseHelper(this);
-        helper.addToTable(jobText.getText().toString(),sentLatlng.latitude,sentLatlng.longitude,circle.getRadius());
+//        DatabaseHelper helper = new DatabaseHelper(this);
+//        helper.addToTable(jobText.getText().toString(),sentLatlng.latitude,sentLatlng.longitude,circle.getRadius());
+
         Intent intent = new Intent(AddLocationActivity.this,MainActivity.class);
         startActivity(intent);
 
