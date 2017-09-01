@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 
 /**
@@ -16,12 +17,12 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static int VERSION = 1;
-    private static String TABLE_NAME = "JOB_TABLE";
+    static int VERSION = 1;
+    static String TABLE_NAME = "JOB_TABLE";
     Context context;
 
     /*COLUMN VARIABLES BELOW AS DESCRIBED*/
-    String COL1 = "JOB", COL2 = "LAT", COL3 = "LON", COL4 = "RAD";
+    static String COL1 = "JOB", COL2 = "LAT", COL3 = "LON", COL4 = "RAD";
 
     public DatabaseHelper(Context context) {
         super(context, TABLE_NAME, null, VERSION);
@@ -59,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (database.insert(TABLE_NAME, null, contentValues) > 0) {
             Log.d("Database addToTable", "Data Added");
+            Toast.makeText(context, "Your reminder has been saved", Toast.LENGTH_SHORT).show();
         } else {
             Log.d("Database addToTable", "Data Not Added");
         }
@@ -86,7 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String getAllQuery = "SELECT * FROM "+TABLE_NAME+" ORDER BY " + COL1;
 
         Cursor cursor = database.rawQuery(getAllQuery,null);
-
+        Log.d("CURSOR SIZE",cursor.getCount()+"");
         return cursor;
     }
 

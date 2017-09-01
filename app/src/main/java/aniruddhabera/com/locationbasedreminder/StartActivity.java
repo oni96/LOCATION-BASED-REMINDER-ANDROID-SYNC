@@ -56,14 +56,14 @@ public class StartActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SharedPreferences preferences = getSharedPreferences("STORENOTE",MODE_PRIVATE);
-
+//                        SharedPreferences preferences = getSharedPreferences("STORENOTE",MODE_PRIVATE);
+//
                         Intent intent = new Intent(StartActivity.this,MainActivity.class);
-
-                        intent.putExtra("lat",preferences.getString("lat",""));
-                        intent.putExtra("lon",preferences.getString("lon",""));
-                        intent.putExtra("note",preferences.getString("note",""));
-                        intent.putExtra("address",preferences.getString("address",""));
+//
+//                        intent.putExtra("lat",preferences.getString("lat",""));
+//                        intent.putExtra("lon",preferences.getString("lon",""));
+//                        intent.putExtra("note",preferences.getString("note",""));
+//                        intent.putExtra("address",preferences.getString("address",""));
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
