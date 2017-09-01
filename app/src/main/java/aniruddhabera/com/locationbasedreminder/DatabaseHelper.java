@@ -19,10 +19,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     static int VERSION = 1;
     static String TABLE_NAME = "JOB_TABLE";
-    Context context;
-
     /*COLUMN VARIABLES BELOW AS DESCRIBED*/
     static String COL1 = "JOB", COL2 = "LAT", COL3 = "LON", COL4 = "RAD";
+    Context context;
 
     public DatabaseHelper(Context context) {
         super(context, TABLE_NAME, null, VERSION);
@@ -59,20 +58,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL4, radius);
 
         if (database.insert(TABLE_NAME, null, contentValues) > 0) {
-            Log.d("Database addToTable", "Data Added");
+            Log.d("Database addToTable", job + " " + lat + " " + lon + " " + radius);
             Toast.makeText(context, "Your reminder has been saved", Toast.LENGTH_SHORT).show();
         } else {
             Log.d("Database addToTable", "Data Not Added");
         }
     }
 
-    public void fetchdata(String lat, String lon){
+    public void fetchdata(String lat, String lon) {
         SQLiteDatabase database = getWritableDatabase();
 
-        database.query(TABLE_NAME,new String[]{COL1,COL2,COL3,COL4},COL2 +"=? OR "+COL3+"=?",new String[]{lat,lon},null,null,COL2);
+        database.query(TABLE_NAME, new String[]{COL1, COL2, COL3, COL4}, COL2 + "=? OR " + COL3 + "=?", new String[]{lat, lon}, null, null, COL2);
 
         //TODO fetch data as per necessary hello
     }
+
     public void deleteFromTable(String job) {
         //TODO DELETE FROM DATABASE
 
@@ -84,11 +84,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAll() {
         //TODO GET ALL DATA FROM TABLE
 
-        SQLiteDatabase  database = getReadableDatabase();
-        String getAllQuery = "SELECT * FROM "+TABLE_NAME+" ORDER BY " + COL1;
+        SQLiteDatabase database = getReadableDatabase();
+        String getAllQuery = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL1;
 
-        Cursor cursor = database.rawQuery(getAllQuery,null);
-        Log.d("CURSOR SIZE",cursor.getCount()+"");
+        Cursor cursor = database.rawQuery(getAllQuery, null);
+        Log.d("CURSOR SIZE", cursor.getCount() + "");
         return cursor;
     }
 

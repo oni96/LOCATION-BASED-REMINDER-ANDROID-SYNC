@@ -131,13 +131,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         int i = 0;
         while (cursor.moveToNext()) {
+
+            //TODO ADD ```RADIUS``` AND ```Address``` TO THE MARKERS
+            String job = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1));
             String lat = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2));
             String lon = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3));
+
 
             if (!lat.isEmpty() && !lon.isEmpty()) {
                 LatLng temp = new LatLng(Double.valueOf(lat), Double.valueOf(lon));
 
-                prevMarker = new MarkerOptions().position(temp);
+                prevMarker = new MarkerOptions().position(temp).title(job);
                 prevJobMarker[i] = map.addMarker(prevMarker);
                 i++;
             }
@@ -395,7 +399,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
 
 
-
         }
 
     }
@@ -440,17 +443,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder.include(myLocationMarker.getPosition());
 
 
-        for(int i=0;i<prevJobMarker.length;i++){
-            if(prevJobMarker[i]!=null){
+        for (int i = 0; i < prevJobMarker.length; i++) {
+            if (prevJobMarker[i] != null) {
                 builder.include(prevJobMarker[i].getPosition());
-            }else{
+            } else {
                 break;
             }
         }
 
         LatLngBounds bounds = builder.build();
 
-        CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds,80);
+        CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds, 80);
         map.animateCamera(showAllJobs);
 
     }
