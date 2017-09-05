@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,18 +36,17 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_add_location);
 
 
-        SharedPreferences temp = getSharedPreferences("activity",MODE_PRIVATE);
+        SharedPreferences temp = getSharedPreferences("activity", MODE_PRIVATE);
 
-        final double lat = Double.valueOf(temp.getString("lat","0"));
-        final double lon = Double.valueOf(temp.getString("lon","0"));
+        final double lat = Double.valueOf(temp.getString("lat", "0"));
+        final double lon = Double.valueOf(temp.getString("lon", "0"));
 
-        sentLatlng = new LatLng(lat,lon);
-        Log.d("LOC",sentLatlng.toString());
-
+        sentLatlng = new LatLng(lat, lon);
+        Log.d("LOC", sentLatlng.toString());
 
 
         address = (EditText) findViewById(R.id.address);
-        address.setText(temp.getString("address",""));
+        address.setText(temp.getString("address", ""));
 
         jobText = (EditText) findViewById(R.id.jobText);
 
@@ -57,7 +57,7 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 circle.remove();
                 circle = map.addCircle(new CircleOptions().center(sentLatlng).radius(progress));
-                Log.d("RADIUS",String.valueOf(progress));
+                Log.d("RADIUS", String.valueOf(progress));
             }
 
             @Override
@@ -72,9 +72,8 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
         });
 
 
-
-        SharedPreferences getLastJob = getSharedPreferences("LASTJOB",MODE_PRIVATE);
-        String job = getLastJob.getString("lastjob","");
+        SharedPreferences getLastJob = getSharedPreferences("LASTJOB", MODE_PRIVATE);
+        String job = getLastJob.getString("lastjob", "");
         jobText.setText(job);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragmentJob);
@@ -92,10 +91,10 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                SharedPreferences storeJob = getSharedPreferences("LASTJOB",MODE_PRIVATE);
+                SharedPreferences storeJob = getSharedPreferences("LASTJOB", MODE_PRIVATE);
                 SharedPreferences.Editor editor = storeJob.edit();
 
-                editor.putString("lastjob",jobText.getText().toString());
+                editor.putString("lastjob", jobText.getText().toString());
                 editor.commit();
 
                 finish();
@@ -116,22 +115,22 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
         circle = map.addCircle(new CircleOptions().center(sentLatlng).radius(1.0));
 
 
-}
+    }
 
 
     public void goToMain(View view) {
 
 
-        SharedPreferences storeJob = getSharedPreferences("LASTJOB",MODE_PRIVATE);
+        SharedPreferences storeJob = getSharedPreferences("LASTJOB", MODE_PRIVATE);
         SharedPreferences.Editor editor = storeJob.edit();
 
-        editor.putString("lastjob","");
+        editor.putString("lastjob", "");
         editor.commit();
         finish();
     }
 
-    public void addButton(View v){
-        SharedPreferences preferences = getSharedPreferences("STORENOTE",MODE_PRIVATE);
+    public void addButton(View v) {
+        SharedPreferences preferences = getSharedPreferences("STORENOTE", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
 //        editor.putString("lat",String.valueOf(sentLatlng.latitude));
@@ -141,12 +140,13 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
 //        editor.commit();
         //Todo add to database
         DatabaseHelper helper = new DatabaseHelper(this);
-        helper.addToTable(jobText.getText().toString(),sentLatlng.latitude,sentLatlng.longitude,seekBar.getProgress());
-
-        Intent intent = new Intent(AddLocationActivity.this,MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
+        if (!jobText.getText().toString().isEmpty()) {
+            helper.addToTable(jobText.getText().toString(), sentLatlng.latitude, sentLatlng.longitude, seekBar.getProgress());
+            Intent intent = new Intent(AddLocationActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } else
+            Toast.makeText(this, "No reminder text added.", Toast.LENGTH_SHORT).show();
 
 
     }

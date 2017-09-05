@@ -45,6 +45,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.io.IOException;
 import java.util.List;
@@ -153,6 +155,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 i++;
             }
         }
+
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                selectedPlace.remove();
+                selectedPlace = map.addMarker(new MarkerOptions().position(latLng));
+                locationAdded = true;
+                if (locationAdded) {
+                    searchBar.setText("Fetching address...");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            getAddress(selectedPlace);
+                        }
+                    }, 2000);}
+
+            }
+        });
 
 
 //        if (PREV_PLACE == 1) {
@@ -304,12 +324,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         selectedPlace.remove();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                searchBar.setText("");
-            }
-        }, 2000);
+
+        searchBar.setText("");
+
         locationAdded = false;
 //        if (prevJobMarker != null)  TODO check if user was searching
 //            prevJobMarker.setVisible(true);
@@ -509,7 +526,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds, height / 2, width / 2, 0);
+        CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds, height / 2, width/2, 10);
         map.animateCamera(showAllJobs);
 
     }
