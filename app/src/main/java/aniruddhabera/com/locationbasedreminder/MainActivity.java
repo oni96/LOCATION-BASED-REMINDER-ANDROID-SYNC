@@ -18,11 +18,13 @@ import android.location.LocationManager;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -131,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         reqLoc();
 
 
-        Cursor cursor = new DatabaseHelper(MainActivity.this).getAll();
+        final Cursor cursor = new DatabaseHelper(MainActivity.this).getAll();
 
         int i = 0;
         while (cursor.moveToNext()) {
@@ -259,8 +261,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onInfoWindowClick(Marker marker) {
                 Toast.makeText(MainActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
                 //TODO open dialog for user to edit or delete
+                Cursor allData = new DatabaseHelper(MainActivity.this).getAll();
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle(marker.getTitle()).setPositiveButton("Edit",null).setNegativeButton("Delete",null);
+                LayoutInflater inflater = getLayoutInflater();
+                View view = inflater.inflate(R.layout.marker_on_click_layout, null);
+
+                EditText editText = (EditText) view.findViewById(R.id.reminder);
+                editText.setText(marker.getTitle());
+
+                while (allData.moveToNext()) {
+                    if (allData.getString(allData.getColumnIndex(DatabaseHelper.COL1)).equals(marker.getTitle())) {
+                        EditText address = (EditText) view.findViewById(R.id.address);
+                        address.setText(allData.getString(allData.getColumnIndex(DatabaseHelper.COL5)));
+                        break;
+                    }
+                }
+
+                builder.setView(view)
+                        .setPositiveButton("Save", null)
+                        .setNegativeButton("Cancel", null)
+                        .setNeutralButton("Delete", null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }

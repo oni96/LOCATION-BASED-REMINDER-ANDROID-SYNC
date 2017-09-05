@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     static int VERSION = 1;
     static String TABLE_NAME = "JOB_TABLE";
     /*COLUMN VARIABLES BELOW AS DESCRIBED*/
-    static String COL1 = "JOB", COL2 = "LAT", COL3 = "LON", COL4 = "RAD";
+    static String COL1 = "JOB", COL2 = "LAT", COL3 = "LON", COL4 = "RAD", COL5 = "ADDRESS";
     Context context;
 
     public DatabaseHelper(Context context) {
@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sqlQuery = "CREATE TABLE " + TABLE_NAME + " (" + COL1 + " VARCHAR(30), " + COL2 + " VARCHAR(30), " + COL3 + " VARCHAR(30), " + COL4 + " VARCHAR(30));";
+        String sqlQuery = "CREATE TABLE " + TABLE_NAME + " (" + COL1 + " VARCHAR(30), " + COL2 + " VARCHAR(30), " + COL3 + " VARCHAR(30), " + COL4 + " VARCHAR(30), " + COL5 + " VARCHAR(30));";
 
         try {
             db.execSQL(sqlQuery);
@@ -46,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addToTable(String job, double lat, double lon, double radius) {
+    public void addToTable(String job, double lat, double lon, double radius, String address) {
 
         SQLiteDatabase database = getWritableDatabase();
 
@@ -56,6 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL2, lat);
         contentValues.put(COL3, lon);
         contentValues.put(COL4, radius);
+        contentValues.put(COL5, address);
 
         if (database.insert(TABLE_NAME, null, contentValues) > 0) {
             Log.d("Database addToTable", job + " " + lat + " " + lon + " " + radius);

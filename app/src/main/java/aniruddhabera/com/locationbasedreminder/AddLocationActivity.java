@@ -136,7 +136,7 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
 
         DatabaseHelper helper = new DatabaseHelper(this);
         if (!jobText.getText().toString().isEmpty()) {
-            helper.addToTable(jobText.getText().toString(), sentLatlng.latitude, sentLatlng.longitude, seekBar.getProgress());
+            helper.addToTable(jobText.getText().toString(), sentLatlng.latitude, sentLatlng.longitude, seekBar.getProgress(), address.getText().toString());
             Intent intent = new Intent(AddLocationActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
