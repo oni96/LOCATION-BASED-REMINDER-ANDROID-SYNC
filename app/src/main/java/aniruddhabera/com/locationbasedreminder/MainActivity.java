@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,6 +20,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -52,9 +55,10 @@ import static android.location.LocationManager.*;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
 
+    final float result[] = new float[2];
     GoogleMap map;
-    Circle circle;
-    Marker myLocationMarker, selectedPlace, prevJobMarker;
+    Circle circleJobs[] = new Circle[10];
+    Marker myLocationMarker, selectedPlace, prevJobMarker[] = new Marker[10];
     MarkerOptions prevMarker;
     Button button;
     LocationManager locationManager;
@@ -64,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     Toast toast;
     LatLng prevJoblatlng;
     private boolean locationAdded = false;
-    final float result[] = new float[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,26 +86,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TODO REMOVE SHARED PREFERENCES AND ADD DATABASE
          */
 
-        SharedPreferences preferences = getSharedPreferences("STORENOTE", MODE_PRIVATE);
-        Log.d("LAT STORE", preferences.getString("lat", ""));
-        if (!preferences.getString("lat", "").isEmpty()) {
-            prevJoblatlng = new LatLng(Double.valueOf(preferences.getString("lat", "")), Double.valueOf(preferences.getString("lon", "")));
-            prevMarker = new MarkerOptions().position(prevJoblatlng).title(preferences.getString("note", "")).snippet(preferences.getString("address", ""));
-            PREV_PLACE = 1;
-        }
+//        SharedPreferences preferences = getSharedPreferences("STORENOTE", MODE_PRIVATE);
+//        Log.d("LAT STORE", preferences.getString("lat", ""));
+//        if (!preferences.getString("lat", "").isEmpty()) {
+//            prevJoblatlng = new LatLng(Double.valueOf(preferences.getString("lat", "")), Double.valueOf(preferences.getString("lon", "")));
+//            prevMarker = new MarkerOptions().position(prevJoblatlng).title(preferences.getString("note", "")).snippet(preferences.getString("address", ""));
+//            PREV_PLACE = 1;
+//        }
 
-        final Handler handler = new Handler();
+//        final Handler handler = new Handler();
+//
+//        final Runnable checkDistance = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (result[0] <= circle.getRadius() && (circle != null))
+//                    Toast.makeText(MainActivity.this, "You're nearby a task.", Toast.LENGTH_SHORT).show();
+//
+//                handler.postDelayed(this, 10000);
+//            }
+//        };
+//
+//        handler.postDelayed(checkDistance, 10000);
 
-        final Runnable checkDistance = new Runnable() {
-            @Override
-            public void run() {
-                if (result[0] <= circle.getRadius())
-                    Toast.makeText(MainActivity.this, "You're nearby a task.", Toast.LENGTH_SHORT).show();
-
-                handler.postDelayed(this, 10000);
-            }
-        };
-        handler.postDelayed(checkDistance, 10000);
     }
 
 
@@ -123,13 +128,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         selectedPlace.setVisible(false);
         reqLoc();
 
-        if (PREV_PLACE == 1) {
-            prevJobMarker = map.addMarker(prevMarker);
 
-            circle = map.addCircle(new CircleOptions().center(prevJoblatlng).radius(1000));
+        Cursor cursor = new DatabaseHelper(MainActivity.this).getAll();
 
+        int i = 0;
+        while (cursor.moveToNext()) {
 
+            //TODO ADD ```Address``` TO THE MARKERS
+            String job = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1));
+            String lat = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2));
+            String lon = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3));
+            String rad = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL4));
+
+            if (!lat.isEmpty() && !lon.isEmpty()) {
+                LatLng temp = new LatLng(Double.valueOf(lat), Double.valueOf(lon));
+
+                prevMarker = new MarkerOptions().position(temp).title(job);
+                prevJobMarker[i] = map.addMarker(prevMarker);
+                CircleOptions options = new CircleOptions().center(prevMarker.getPosition()).radius(Double.valueOf(rad)).strokeWidth(1)
+                                                            .strokeColor(Color.argb(255,43,197,189))
+                                                            .fillColor(Color.argb(75,43,197,189));      //TODO CHANGE YOUR COLOR HERE IF NEEDED
+                circleJobs[i] = map.addCircle(options);
+                circleJobs[i].setVisible(false);
+                i++;
+            }
         }
+
+
+//        if (PREV_PLACE == 1) {
+//            prevJobMarker = map.addMarker(prevMarker);
+//
+//            circle = map.addCircle(new CircleOptions().center(prevJoblatlng).radius(1000));
+//
+//
+//        }
 
 
         map.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
@@ -159,6 +191,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }, 2000);
                 }
 
+            }
+        });
+
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                for (int i = 0; i < 10; i++) {
+                    if (circleJobs[i] != null)
+                        circleJobs[i].setVisible(false);
+                }
+            }
+        });
+
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                int i;
+
+                for (i = 0; i < 10; i++) {
+                    if (circleJobs[i] != null)
+                        circleJobs[i].setVisible(false);
+                }
+                for (i = 0; i < 10; i++) {
+
+
+                    if (circleJobs[i] != null && marker.getPosition().latitude == circleJobs[i].getCenter().latitude && marker.getPosition().longitude == circleJobs[i].getCenter().longitude) {
+
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(circleJobs[i].getCenter(), 15);
+                        map.animateCamera(cameraUpdate);
+                        circleJobs[i].setVisible(true);
+
+                        break;
+
+                    }
+
+
+                }
+
+
+                return false;
             }
         });
 
@@ -210,14 +282,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void searchPlace(View v) {
-        prevJobMarker.setVisible(false);
+        //TODO NEED TO DISABLE ALL MARKERS
+        // prevJobMarker.setVisible(false);
         searchPlaceMethod();
     }
 
 
     @Override
     protected void onDestroy() {
-        toast.cancel();
         locationManager.removeUpdates(this);
         super.onDestroy();
     }
@@ -225,6 +297,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onBackPressed() {
+
+        for (int i = 0; i < 10; i++) {
+            if (circleJobs[i] != null)
+                circleJobs[i].setVisible(false);
+        }
+
         selectedPlace.remove();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -233,8 +311,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }, 2000);
         locationAdded = false;
-        if (prevJobMarker != null)
-            prevJobMarker.setVisible(true);
+//        if (prevJobMarker != null)  TODO check if user was searching
+//            prevJobMarker.setVisible(true);
 
         if (doubleBack) {
             toast.cancel();
@@ -345,11 +423,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     public void addButton(View v) {
-        if (prevJobMarker != null)
-            prevJobMarker.setVisible(false);
+//        if (prevJobMarker != null) TODO DISABLE ALL MARKERS
+//            prevJobMarker.setVisible(false);
 
-        if (circle != null)
-            circle.setVisible(false);
+//        if (circle != null) Todo hide circles here
+//            circle.setVisible(false);
 
         if (searchBar.getText().toString().isEmpty()) {
             Toast.makeText(this, "Please choose a location to add reminder", Toast.LENGTH_SHORT).show();
@@ -361,19 +439,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             //TODO GO TO ADD LOCATION REMINDER ACTIVITY
 
-            SharedPreferences temp = getSharedPreferences("activity",MODE_PRIVATE);
+            SharedPreferences temp = getSharedPreferences("activity", MODE_PRIVATE);
             SharedPreferences.Editor editor = temp.edit();
             LatLng latLng = selectedPlace.getPosition();
             editor.putString("address", searchBar.getText().toString());
             editor.putString("lat", String.valueOf(latLng.latitude));
-            editor.putString("lon",String.valueOf(latLng.longitude));
+            editor.putString("lon", String.valueOf(latLng.longitude));
             editor.commit();
 
             Intent intent = new Intent(MainActivity.this, AddLocationActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-
-
 
 
         }
@@ -395,7 +471,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d("Distance", Float.toString(result[0]));
 
 
-
     }
 
     @Override
@@ -415,15 +490,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void showAllJobs(View view) {
 
-        //TODO GET JOBS FROM DBASE
+        //TODO GET JOBS FROM DBASE and use the CAmera to view all in bounds
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(myLocationMarker.getPosition());
-        builder.include(prevJobMarker.getPosition());
+
+
+        for (int i = 0; i < prevJobMarker.length; i++) {
+            if (prevJobMarker[i] != null) {
+                builder.include(prevJobMarker[i].getPosition());
+            } else {
+                break;
+            }
+        }
 
         LatLngBounds bounds = builder.build();
-
-        CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds, 500);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds, height / 2, width / 2, 0);
         map.animateCamera(showAllJobs);
 
     }
