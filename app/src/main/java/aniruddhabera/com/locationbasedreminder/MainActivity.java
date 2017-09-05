@@ -482,10 +482,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
 
-        Location.distanceBetween(prevJoblatlng.latitude, prevJoblatlng.longitude, myLocationMarker.getPosition().latitude, myLocationMarker.getPosition().longitude, result);
-
-
-        Log.d("Distance", Float.toString(result[0]));
 
 
     }
@@ -511,9 +507,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(myLocationMarker.getPosition());
+        int i = 0;
 
-
-        for (int i = 0; i < prevJobMarker.length; i++) {
+        for (i = 0; i < prevJobMarker.length; i++) {
             if (prevJobMarker[i] != null) {
                 builder.include(prevJobMarker[i].getPosition());
             } else {
@@ -526,8 +522,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds, height / 2, width/2, 10);
-        map.animateCamera(showAllJobs);
+        if(i>0){
+            CameraUpdate showAllJobs = CameraUpdateFactory.newLatLngBounds(bounds, height / 2, width/2, 10);
+            map.animateCamera(showAllJobs);
+        }else{
+            Toast.makeText(this, "No reminders to view.", Toast.LENGTH_SHORT).show();
+            getLocationButton(view);
+        }
+
 
     }
 }
