@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="aniruddhabera.com.locationbasedreminder.AddLocationActivity"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -13,8 +14,7 @@
         android:text="Job:"
         android:id="@+id/jobTextView"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="20dp"/>
+        android:layout_marginLeft="20dp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -31,46 +31,65 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
         android:text="Edit Location:"
         android:layout_below="@+id/jobText"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
     <fragment
         android:id="@+id/mapFragmentJob"
-        android:layout_below="@+id/jobTextView"
+
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="10dp"
+
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:text="Select radius:" />
+    <SeekBar
+        android:id="@+id/seekBarRadius"
+        android:max="1000"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="0 metres"
+        android:id="@+id/radiusText" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Address:"
         android:layout_below="@+id/mapFragmentJob"
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="20dp"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp" />
 
-    <SeekBar
-        android:id="@+id/seekBarRadius"
-        android:max="1000"
-        android:layout_centerHorizontal="true"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mapFragmentJob"
-        android:layout_marginTop="20dp"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/mapFragmentJob"
-        android:layout_marginTop="65dp"
+
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:id="@+id/address"
@@ -82,7 +101,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/address"
         android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal">
 
         <Button
             android:layout_width="wrap_content"
@@ -100,6 +120,4 @@
     </LinearLayout>
 
 
-
-
-</RelativeLayout>
+</LinearLayout>
