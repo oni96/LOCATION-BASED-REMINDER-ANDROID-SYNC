@@ -17,15 +17,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api_key" />
 
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".StartActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".StartActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddLocationActivity"></activity>
+        <activity android:name=".AddLocationActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
