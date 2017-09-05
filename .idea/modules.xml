@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+
+      <module fileurl="file://$PROJECT_DIR$/LOCATION-BASED-REMINDER-ANDROID.iml" filepath="$PROJECT_DIR$/LOCATION-BASED-REMINDER-ANDROID.iml" />
+
       <module fileurl="file://$PROJECT_DIR$/LOCATION-BASED-REMINDER-ANDROID-SYNC.iml" filepath="$PROJECT_DIR$/LOCATION-BASED-REMINDER-ANDROID-SYNC.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
