@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onMapLongClick(LatLng latLng) {
                 selectedPlace.remove();
                 selectedPlace = map.addMarker(new MarkerOptions().position(latLng));
+                map.moveCamera(CameraUpdateFactory.newLatLng(selectedPlace.getPosition()));
                 locationAdded = true;
                 if (locationAdded) {
                     searchBar.setText("Fetching address...");
@@ -258,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
-            public void onInfoWindowClick(Marker marker) {
+            public void onInfoWindowClick(final Marker marker) {
                 Toast.makeText(MainActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
                 //TODO open dialog for user to edit or delete
                 Cursor allData = new DatabaseHelper(MainActivity.this).getAll();
@@ -281,7 +282,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 builder.setView(view)
                         .setPositiveButton("Save", null)
                         .setNegativeButton("Cancel", null)
-                        .setNeutralButton("Delete", null);
+                        .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new DatabaseHelper(MainActivity.this).deleteFromTable(marker.getTitle());
+                                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                            }
+                        });
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
