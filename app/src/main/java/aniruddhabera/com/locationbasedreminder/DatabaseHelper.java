@@ -47,7 +47,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void addToTable(String job, double lat, double lon, double radius) {
-        //TODO ADD TO DATABASE THE PARAMETERS PASSED
+
         SQLiteDatabase database = getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -82,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getAll() {
-        //TODO GET ALL DATA FROM TABLE
+
 
         SQLiteDatabase database = getReadableDatabase();
         String getAllQuery = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL1;

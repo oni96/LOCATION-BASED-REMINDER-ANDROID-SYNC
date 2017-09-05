@@ -254,6 +254,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Toast.makeText(MainActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
+                //TODO open dialog for user to edit or delete
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(marker.getTitle()).setPositiveButton("Edit",null).setNegativeButton("Delete",null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
 
     }
 

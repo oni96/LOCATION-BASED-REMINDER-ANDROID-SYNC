@@ -30,7 +30,7 @@ public class StartActivity extends AppCompatActivity {
                 @Override
                 public void run() {
 
-                    //TODO FETCH ALL DATA FROM DBASE AND SEND IT TO THE MAINACTIVITY
+
                     SharedPreferences preferences = getSharedPreferences("STORENOTE",MODE_PRIVATE);
 
                     Intent intent = new Intent(StartActivity.this,MainActivity.class);
