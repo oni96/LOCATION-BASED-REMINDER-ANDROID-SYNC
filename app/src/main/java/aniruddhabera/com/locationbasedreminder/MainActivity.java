@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
 
-
+//
             }
         });
         map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
