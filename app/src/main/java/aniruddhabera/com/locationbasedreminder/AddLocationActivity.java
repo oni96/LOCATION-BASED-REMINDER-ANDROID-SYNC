@@ -110,13 +110,19 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
 
     public void addButton(View v) {
         DatabaseHelper helper = new DatabaseHelper(this);
-        if (!jobText.getText().toString().isEmpty()) {
+        if (jobText.getText().toString().isEmpty()) {
+            Toast.makeText(this, "No reminder text added.", Toast.LENGTH_SHORT).show();
+
+
+        } else if (seekBar.getProgress() == 0) {
+            Toast.makeText(this, "Radius is set to zero. Increase it to get perfect reminders.", Toast.LENGTH_SHORT).show();
+
+        } else {
             helper.addToTable(jobText.getText().toString(), sentLatlng.latitude, sentLatlng.longitude, seekBar.getProgress(), address.getText().toString());
             Intent intent = new Intent(AddLocationActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        } else
-            Toast.makeText(this, "No reminder text added.", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
