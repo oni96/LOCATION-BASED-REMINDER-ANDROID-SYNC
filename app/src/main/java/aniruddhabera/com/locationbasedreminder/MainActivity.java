@@ -16,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.LayoutInflaterFactory;
@@ -242,8 +243,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 LayoutInflater inflater = getLayoutInflater();
                 View view = inflater.inflate(R.layout.marker_on_click_layout, null);
-                EditText editText = (EditText) view.findViewById(R.id.reminder);
+                final EditText editText = (EditText) view.findViewById(R.id.reminder);
                 editText.setText(marker.getTitle());
+
+                final String currentJob = marker.getTitle();
+
                 while (allData.moveToNext()) {
                     if (allData.getString(allData.getColumnIndex(DatabaseHelper.COL1)).equals(marker.getTitle())) {
                         EditText address = (EditText) view.findViewById(R.id.address);
@@ -252,16 +256,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 }
                 builder.setView(view)
-                        .setPositiveButton("Save", null)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DatabaseHelper helper = new DatabaseHelper(MainActivity.this);
+                                helper.updateData(editText.getText().toString(), currentJob);
+                                refreshMarkers();
+                            }
+                        })
                         .setNegativeButton("Cancel", null)
                         .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 new DatabaseHelper(MainActivity.this).deleteFromTable(marker.getTitle());
                                 Toast.makeText(MainActivity.this, "Your reminder was deleted successfully.", Toast.LENGTH_SHORT).show();
-                                Intent reload = new Intent(MainActivity.this, MainActivity.class);
-                                reload.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(reload);
+                                refreshMarkers();
 
                             }
                         });
@@ -271,6 +280,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
+    }
+
+    public void refreshMarkers() {
+        final Cursor cursor = new DatabaseHelper(MainActivity.this).getAll();
+        int i;
+        for (i = 0; i < prevJobMarker.length; i++) {
+            if (prevJobMarker[i] != null) {
+                prevJobMarker[i].remove();
+                circleJobs[i].remove();
+            } else
+                break;
+        }
+
+        while (cursor.moveToNext()) {
+            String job = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1));
+            String lat = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2));
+            String lon = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3));
+            String rad = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL4));
+            String add = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL5));
+            if (!lat.isEmpty() && !lon.isEmpty()) {
+                LatLng temp = new LatLng(Double.valueOf(lat), Double.valueOf(lon));
+                prevMarker = new MarkerOptions().position(temp).title(job).snippet(add);
+                prevJobMarker[i] = map.addMarker(prevMarker);
+                CircleOptions options = new CircleOptions().center(prevMarker.getPosition()).radius(Double.valueOf(rad)).strokeWidth(1)
+                        .strokeColor(Color.argb(255, 43, 197, 189))
+                        .fillColor(Color.argb(75, 43, 197, 189));      //TODO CHANGE YOUR COLOR HERE IF NEEDED
+                circleJobs[i] = map.addCircle(options);
+                circleJobs[i].setVisible(false);
+                i++;
+            }
+        }
     }
 
 

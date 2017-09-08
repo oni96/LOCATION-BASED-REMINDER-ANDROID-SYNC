@@ -80,4 +80,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public void updateData(String job, String prevJob) {
+        SQLiteDatabase database = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL1, job);
+
+        if (database.update(TABLE_NAME, contentValues, COL1 + " = ?", new String[]{prevJob}) > 0)
+            Toast.makeText(context, "Updated", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
+    }
+
 }
