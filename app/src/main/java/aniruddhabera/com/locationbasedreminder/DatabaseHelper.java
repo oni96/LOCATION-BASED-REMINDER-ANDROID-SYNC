@@ -17,11 +17,11 @@ import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    static int VERSION = 1;
-    static String TABLE_NAME = "JOB_TABLE";
+    private static int VERSION = 1;
+    private static String TABLE_NAME = "JOB_TABLE";
     /*COLUMN VARIABLES BELOW AS DESCRIBED*/
     static String COL1 = "JOB", COL2 = "LAT", COL3 = "LON", COL4 = "RAD", COL5 = "ADDRESS";
-    Context context;
+    private Context context;
 
     public DatabaseHelper(Context context) {
         super(context, TABLE_NAME, null, VERSION);
@@ -76,8 +76,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = getReadableDatabase();
         String getAllQuery = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL1;
         Cursor cursor = database.rawQuery(getAllQuery, null);
-        Log.d("CURSOR SIZE", cursor.getCount() + "");
+        //Log.d("CURSOR SIZE", cursor.getCount() + "");
         return cursor;
+    }
+
+    public void updateData(String job, String prevJob) {
+        SQLiteDatabase database = getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL1, job);
+
+        if (database.update(TABLE_NAME, contentValues, COL1 + " = ?", new String[]{prevJob}) > 0)
+            Toast.makeText(context, "Updated", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
     }
 
 }
