@@ -16,10 +16,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -41,7 +39,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -49,9 +46,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -61,18 +55,16 @@ import static android.location.LocationManager.*;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
 
-    final float result[] = new float[2];
     GoogleMap map;
     Circle circleJobs[] = new Circle[10];
     Marker myLocationMarker, selectedPlace, prevJobMarker[] = new Marker[10];
     MarkerOptions prevMarker;
     Button button;
     LocationManager locationManager;
-    int PLACE_REQ = 1, PREV_PLACE = 0;
+    int PLACE_REQ = 1;
     EditText searchBar;
     boolean doubleBack = false;
     Toast toast;
-    LatLng prevJoblatlng;
     private boolean locationAdded = false;
 
     @Override
@@ -464,6 +456,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 SharedPreferences preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
                 double lat = Double.valueOf(preferences.getString("lastLat", "0"));
                 double lon = Double.valueOf(preferences.getString("lastLong", "0"));
+
                 if (lat != 0 && lon != 0) {
                     LatLng latLng = new LatLng(lat, lon);
                     myLocationMarker = map.addMarker(new MarkerOptions().position(latLng)
@@ -471,22 +464,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
                     map.animateCamera(cameraUpdate);
                 } else {
+                    Toast.makeText(this, "GPS Signal not found", Toast.LENGTH_SHORT).show();
                     location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+                    myLocationMarker = map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15);
+                    map.animateCamera(cameraUpdate);
+
+                    preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("lastLat", Double.toString(location.getLatitude()));
+                    editor.putString("lastLong", Double.toString(location.getLongitude()));
+                    editor.commit();
                 }
+            } else {
+                //location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+                myLocationMarker = map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15);
+                map.animateCamera(cameraUpdate);
+
+                SharedPreferences preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("lastLat", Double.toString(location.getLatitude()));
+                editor.putString("lastLong", Double.toString(location.getLongitude()));
+                editor.commit();
             }
-            Log.d("Location", location.toString());
-
-            myLocationMarker = map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15);
-            map.animateCamera(cameraUpdate);
-
-            SharedPreferences preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("lastLat", Double.toString(location.getLatitude()));
-            editor.putString("lastLong", Double.toString(location.getLongitude()));
-            editor.commit();
-        }
+            }
+//            Log.d("Location", location.toString());
 
     }
 
