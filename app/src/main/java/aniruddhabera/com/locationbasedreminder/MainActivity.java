@@ -388,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
                             /**
                              * CUSTOM TOAST BELOW!
                              */
@@ -395,7 +396,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             TextView toastMessage = (TextView) toast.getView().findViewById(android.R.id.message);
                             toastMessage.setGravity(Gravity.CENTER);
                             toast.show();
-                            SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+
+                            SharedPreferences preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
                             double lat = Double.valueOf(preferences.getString("lastLat", "0"));
                             double lon = Double.valueOf(preferences.getString("lastLong", "0"));
                             LatLng latLng = new LatLng(lat, lon);
@@ -405,24 +407,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             map.animateCamera(cameraUpdate);
                         }
                     });
+
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
         } else {
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Location Permissions were not found. Restart app to grant permissions", Toast.LENGTH_SHORT).show();
                 return;
             }
             Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
             if (location == null) {
-                location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+                SharedPreferences preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
+                double lat = Double.valueOf(preferences.getString("lastLat", "0"));
+                double lon = Double.valueOf(preferences.getString("lastLong", "0"));
+                if (lat != 0 && lon != 0) {
+                    LatLng latLng = new LatLng(lat, lon);
+                    myLocationMarker = map.addMarker(new MarkerOptions().position(latLng)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+                    map.animateCamera(cameraUpdate);
+                } else {
+                    location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+                }
             }
             Log.d("Location", location.toString());
+
             myLocationMarker = map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15);
             map.animateCamera(cameraUpdate);
-            SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+
+            SharedPreferences preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString("lastLat", Double.toString(location.getLatitude()));
             editor.putString("lastLong", Double.toString(location.getLongitude()));
@@ -467,6 +484,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         myLocationMarker = map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
+        SharedPreferences preferences = getSharedPreferences("LASTGOODLOCATION", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("lastLat", Double.toString(location.getLatitude()));
+        editor.putString("lastLong", Double.toString(location.getLongitude()));
+        editor.commit();
 
     }
 
