@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TODO REMOVE SHARED PREFERENCES AND ADD DATABASE
          */
 
+        startService(new Intent(this, DistanceCalculatorService.class));
+
 //        final Handler showTask = new Handler();
 //
 //        Runnable calculateDist;
