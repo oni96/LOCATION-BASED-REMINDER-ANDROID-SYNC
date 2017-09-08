@@ -86,26 +86,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         /*
         TODO REMOVE SHARED PREFERENCES AND ADD DATABASE
          */
-//        SharedPreferences preferences = getSharedPreferences("STORENOTE", MODE_PRIVATE);
-//        Log.d("LAT STORE", preferences.getString("lat", ""));
-//        if (!preferences.getString("lat", "").isEmpty()) {
-//            prevJoblatlng = new LatLng(Double.valueOf(preferences.getString("lat", "")), Double.valueOf(preferences.getString("lon", "")));
-//            prevMarker = new MarkerOptions().position(prevJoblatlng).title(preferences.getString("note", "")).snippet(preferences.getString("address", ""));
-//            PREV_PLACE = 1;
-//        }
-//        final Handler handler = new Handler();
+
+//        final Handler showTask = new Handler();
 //
-//        final Runnable checkDistance = new Runnable() {
+//        Runnable calculateDist;
+//        calculateDist = new Runnable() {
 //            @Override
 //            public void run() {
-//                if (result[0] <= circle.getRadius() && (circle != null))
-//                    Toast.makeText(MainActivity.this, "You're nearby a task.", Toast.LENGTH_SHORT).show();
+//                Cursor cursor = new DatabaseHelper(MainActivity.this).getAll();
 //
-//                handler.postDelayed(this, 10000);
+//                while(cursor.moveToNext()){
+//                    double lat = Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2)));
+//                    double lon = Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3)));
+//
+//                    Location.distanceBetween(myLocationMarker.getPosition().latitude,myLocationMarker.getPosition().longitude,lat,lon,result);
+//                    Log.d("Distance between "+cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1)),result[0]+"");
+//
+//                    if(result[0]<=cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COL4))){
+//                        Log.d("You are nearby a job",cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1)));
+//                    }
+//
+//                    showTask.postDelayed(this,1000);
+//                }
+//                cursor.close();
 //            }
 //        };
 //
-//        handler.postDelayed(checkDistance, 10000);
+//        showTask.postDelayed(calculateDist,1000);
     }
 
 
@@ -164,13 +171,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
-//        if (PREV_PLACE == 1) {
-//            prevJobMarker = map.addMarker(prevMarker);
-//
-//            circle = map.addCircle(new CircleOptions().center(prevJoblatlng).radius(1000));
-//
-//
-//        }
+
         map.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
             @Override
             public void onCameraMove() {
@@ -272,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     public String getAddress(Marker marker) {
-        //TODO write geocoder address fetch function here
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         final LatLng latLng = marker.getPosition();
         final String[] place = new String[1];
