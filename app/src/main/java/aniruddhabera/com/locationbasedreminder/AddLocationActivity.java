@@ -118,7 +118,7 @@ public class AddLocationActivity extends AppCompatActivity implements OnMapReady
             Toast.makeText(this, "Radius is set to zero. Increase it to get perfect reminders.", Toast.LENGTH_SHORT).show();
 
         } else {
-            helper.addToTable(jobText.getText().toString(), sentLatlng.latitude, sentLatlng.longitude, seekBar.getProgress(), address.getText().toString());
+            helper.addToTable(jobText.getText().toString().trim(), sentLatlng.latitude, sentLatlng.longitude, seekBar.getProgress(), address.getText().toString());
             Intent intent = new Intent(AddLocationActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

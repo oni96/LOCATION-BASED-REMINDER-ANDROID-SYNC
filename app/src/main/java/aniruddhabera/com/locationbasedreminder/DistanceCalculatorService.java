@@ -41,7 +41,7 @@ public class DistanceCalculatorService extends Service implements LocationListen
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             try {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 50, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -73,9 +73,11 @@ public class DistanceCalculatorService extends Service implements LocationListen
 
         Cursor cursor = new DatabaseHelper(this).getAll();
 
+
         while (cursor.moveToNext()) {
             double lat = Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2)));
             double lon = Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3)));
+
 
             float distance[] = new float[2];
 
@@ -98,13 +100,15 @@ public class DistanceCalculatorService extends Service implements LocationListen
 
                 builder.setContentIntent(pendingIntent);
 
+                Notification compat = builder.build();
+                compat.flags = Notification.FLAG_ONLY_ALERT_ONCE;
+
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(cursor.getPosition(), builder.build());
+
+                notificationManager.notify(cursor.getPosition(), compat);
             }
 
         }
-
-        //TODO use the same alogrithm to detect changes is distance so that it can be used to send notifs. :0
 
     }
 
