@@ -76,38 +76,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment);
         mapFragment.getMapAsync(this);
 
-        /*
-        TODO REMOVE SHARED PREFERENCES AND ADD DATABASE
-         */
 
         startService(new Intent(this, DistanceCalculatorService.class));
 
-//        final Handler showTask = new Handler();
-//
-//        Runnable calculateDist;
-//        calculateDist = new Runnable() {
-//            @Override
-//            public void run() {
-//                Cursor cursor = new DatabaseHelper(MainActivity.this).getAll();
-//
-//                while(cursor.moveToNext()){
-//                    double lat = Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2)));
-//                    double lon = Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3)));
-//
-//                    Location.distanceBetween(myLocationMarker.getPosition().latitude,myLocationMarker.getPosition().longitude,lat,lon,result);
-//                    Log.d("Distance between "+cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1)),result[0]+"");
-//
-//                    if(result[0]<=cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.COL4))){
-//                        Log.d("You are nearby a job",cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1)));
-//                    }
-//
-//                    showTask.postDelayed(this,1000);
-//                }
-//                cursor.close();
-//            }
-//        };
-//
-//        showTask.postDelayed(calculateDist,1000);
     }
 
 
@@ -129,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Cursor cursor = new DatabaseHelper(MainActivity.this).getAll();
         int i = 0;
         while (cursor.moveToNext()) {
-            //TODO ADD ```Address``` TO THE MARKERS
+
             String job = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1));
             String lat = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2));
             String lon = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3));
@@ -141,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 prevJobMarker[i] = map.addMarker(prevMarker);
                 CircleOptions options = new CircleOptions().center(prevMarker.getPosition()).radius(Double.valueOf(rad)).strokeWidth(1)
                         .strokeColor(Color.argb(255, 43, 197, 189))
-                        .fillColor(Color.argb(75, 43, 197, 189));      //TODO CHANGE YOUR COLOR HERE IF NEEDED
+                        .fillColor(Color.argb(75, 43, 197, 189));      //CHANGE YOUR COLOR HERE IF NEEDED
                 circleJobs[i] = map.addCircle(options);
                 circleJobs[i].setVisible(false);
                 i++;
@@ -176,8 +147,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     selectedPlace = map.addMarker(new MarkerOptions().position(newpos));
 
                 }
-
-//
             }
         });
         map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
@@ -230,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onInfoWindowClick(final Marker marker) {
                 Toast.makeText(MainActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
-                //TODO open dialog for user to edit or delete
                 Cursor allData = new DatabaseHelper(MainActivity.this).getAll();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 LayoutInflater inflater = getLayoutInflater();
@@ -297,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 prevJobMarker[i] = map.addMarker(prevMarker);
                 CircleOptions options = new CircleOptions().center(prevMarker.getPosition()).radius(Double.valueOf(rad)).strokeWidth(1)
                         .strokeColor(Color.argb(255, 43, 197, 189))
-                        .fillColor(Color.argb(75, 43, 197, 189));      //TODO CHANGE YOUR COLOR HERE IF NEEDED
+                        .fillColor(Color.argb(75, 43, 197, 189));      //CHANGE YOUR COLOR HERE IF NEEDED
                 circleJobs[i] = map.addCircle(options);
                 circleJobs[i].setVisible(false);
                 i++;
@@ -491,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 editor.commit();
             }
             }
-//            Log.d("Location", location.toString());
+
 
     }
 
@@ -552,7 +520,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void showAllJobs(View view) {
-        //TODO GET JOBS FROM DBASE and use the CAmera to view all in bounds
+
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(myLocationMarker.getPosition());
         int i = 0;

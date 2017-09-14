@@ -60,14 +60,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void fetchdata(String lat, String lon) {
-        SQLiteDatabase database = getWritableDatabase();
-        database.query(TABLE_NAME, new String[]{COL1, COL2, COL3, COL4}, COL2 + "=? OR " + COL3 + "=?", new String[]{lat, lon}, null, null, COL2);
-        //TODO fetch data as per necessary hello
-    }
-
     public void deleteFromTable(String job) {
-        //TODO DELETE FROM DATABASE
+
         SQLiteDatabase database = getWritableDatabase();
         database.delete(TABLE_NAME, COL1 + "=?", new String[]{job});
     }
