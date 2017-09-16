@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     GoogleMap map;
-    Circle circleJobs[] = new Circle[10];
-    Marker myLocationMarker, selectedPlace, prevJobMarker[] = new Marker[10];
+    Circle circleJobs[] = new Circle[100];
+    Marker myLocationMarker, selectedPlace, prevJobMarker[] = new Marker[100];
     MarkerOptions prevMarker;
     Button button;
     LocationManager locationManager;
