@@ -41,7 +41,7 @@ public class DistanceCalculatorService extends Service implements LocationListen
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             try {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 250, this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
