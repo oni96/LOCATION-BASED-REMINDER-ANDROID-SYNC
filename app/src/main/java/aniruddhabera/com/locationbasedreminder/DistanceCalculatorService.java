@@ -41,7 +41,7 @@ public class DistanceCalculatorService extends Service implements LocationListen
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             try {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 250, this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -94,8 +94,12 @@ public class DistanceCalculatorService extends Service implements LocationListen
                 builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
                 builder.setAutoCancel(true);
 
-                Intent intent = new Intent(this, StartActivity.class);
+                Intent intent = new Intent(this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                intent.putExtra("NOTIFLAT", Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2))));
+                intent.putExtra("NOTIFLON", Double.valueOf(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL3))));
+
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
                 builder.setContentIntent(pendingIntent);
