@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 100; i++) {
                     if (circleJobs[i] != null)
                         circleJobs[i].setVisible(false);
                 }
@@ -176,16 +176,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                int i;
-                for (i = 0; i < 10; i++) {
+                int i = 0;
+                for (i = 0; i < 100; i++) {
                     if (circleJobs[i] != null)
                         circleJobs[i].setVisible(false);
                 }
-                for (i = 0; i < 10; i++) {
+                for (i = 0; i < 100; i++) {
                     if (circleJobs[i] != null && marker.getPosition().latitude == circleJobs[i].getCenter().latitude && marker.getPosition().longitude == circleJobs[i].getCenter().longitude) {
+                        circleJobs[i].setVisible(true);
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(circleJobs[i].getCenter(), 15);
                         map.animateCamera(cameraUpdate);
-                        circleJobs[i].setVisible(true);
+                        Log.d("Circle i", i + "");
                         break;
 
                     }
@@ -252,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             } else
                 break;
         }
-
+        i = 0;
         while (cursor.moveToNext()) {
             String job = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL1));
             String lat = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COL2));
